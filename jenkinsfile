@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    dockerImage = docker.build("my-python-app")
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    dockerImage.inside {
+                        sh 'python -m unittest discover -s tests'
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    dockerImage.push("biswaraj111/my-python-app:latest")
+                }
+            }
+        }
+    }
+}
+
